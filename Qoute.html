@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Quote Generator</title>
+    <!-- Include Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Add custom styles here */
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">Random Quote Generator</h1>
+      <div id="quote-container" class="border border-gray-300 rounded p-4 mb-4">
+        <p id="quote-text" class="text-lg"></p>
+        <p id="quote-author" class="mt-2 font-semibold"></p>
+      </div>
+      <button
+        id="generate-btn"
+        class="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Generate Quote
+      </button>
+    </div>
+
+    <!-- JavaScript code -->
+    <script>
+      // Function to fetch random quote from the Quotable API
+      async function fetchRandomQuote() {
+        const response = await fetch("https://api.quotable.io/random");
+        const data = await response.json();
+        return data;
+      }
+
+      // Function to display random quote on the webpage
+      async function displayRandomQuote() {
+        const quoteContainer = document.getElementById("quote-container");
+        const quoteText = document.getElementById("quote-text");
+        const quoteAuthor = document.getElementById("quote-author");
+
+        // Fetch random quote
+        const quoteData = await fetchRandomQuote();
+
+        // Display quote text and author
+        quoteText.textContent = `"${quoteData.content}"`;
+        quoteAuthor.textContent = `- ${quoteData.author}`;
+      }
+
+      // Event listener for the "Generate Quote" button
+      document
+        .getElementById("generate-btn")
+        .addEventListener("click", displayRandomQuote);
+
+      // Initial call to display a random quote when the page loads
+      displayRandomQuote();
+    </script>
+  </body>
+</html>
