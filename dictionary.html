@@ -1,114 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KnoWords</title>
     <!-- Include Tailwind CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
       /* Add custom styles here */
       .dialogue-box {
         background-color: #fde047;
         color: black;
       }
+
+      /* Style for the "How to Use" button */
+      .how-to-use-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background-color: #fde047;
+        color: black;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+      }
+
+      /* Style for the h1 tag */
+      h1 {
+        width: 100%;
+        text-align: center;
+        background-image: linear-gradient(to right, black, yellow);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
     </style>
-  </head>
-  <body class="bg-black">
-    <div
-      class="container mx-auto p-4 flex justify-center items-center h-screen"
-    >
-      <div class="max-w-md w-full">
-        <h1 class="text-2xl font-bold mb-4 text-center bg-yellow-400">
+</head>
+<body class="bg-black relative">
+    <!-- How to Use Button -->
+    <button id="how-to-use-btn" class="how-to-use-btn">How to Use</button>
+
+    <div class="container mx-auto p-4">
+        <!-- KnoWords Header -->
+        <h1 class="text-2xl font-bold mb-4">
           KnoWords
         </h1>
 
         <!-- Search Bar -->
-        <div class="flex">
-          <input
-            type="text"
-            id="search-input"
-            class="rounded-l-md p-2 border border-gray-300 focus:outline-none focus:ring focus:border-blue-300 w-full"
-            placeholder="Enter word..."
-          />
-          <button
-            id="search-btn"
-            class="bg-blue-500 text-white px-4 py-2 rounded-r-md"
-          >
-            Search
-          </button>
+        <div class="flex mb-4">
+            <input type="text" id="search-input" class="rounded-l-md p-2 border border-yellow-600 focus:outline-none focus:ring focus:border-white-300 w-full" placeholder="Enter word...">
+            <button id="search-btn" class="bg-black-500 text-white px-4 py-2 rounded-r-md hover:bg-gray-600 transition-colors">Search</button>
         </div>
+
         <!-- Container to display brief explanation -->
         <div id="explanation-container" class="mt-4 dialogue-box p-4 hidden">
           <!-- Brief explanation will be displayed here dynamically -->
         </div>
-      </div>
     </div>
 
     <!-- JavaScript code -->
     <script>
-      // Function to fetch brief explanation from WordsAPI
-      async function fetchExplanation(word) {
-        const response = await fetch(
-          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-        );
-        if (!response.ok) {
-          throw new Error("Word not found");
+        // Function to fetch brief explanation from WordsAPI
+        async function fetchExplanation(word) {
+            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+            if (!response.ok) {
+                throw new Error("Word not found");
+            }
+            const data = await response.json();
+            return data;
         }
-        const data = await response.json();
-        return data;
-      }
 
-      // Function to display brief explanation on the webpage
-      async function displayExplanation(word) {
-        const explanationContainer = document.getElementById(
-          "explanation-container"
-        );
+        // Function to display brief explanation on the webpage
+        async function displayExplanation(word) {
+            const explanationContainer = document.getElementById("explanation-container");
 
-        try {
-          // Fetch explanation
-          const explanationData = await fetchExplanation(word);
+            try {
+                // Fetch explanation
+                const explanationData = await fetchExplanation(word);
 
-          // Extract brief explanation
-          const explanationHTML =
-            explanationData[0].meanings[0].definitions[0].definition;
-          explanationContainer.innerHTML = `<p class="text-lg font-semibold">${explanationHTML}</p>`;
-          explanationContainer.classList.remove("hidden");
-        } catch (error) {
-          // Display error message
-          explanationContainer.innerHTML = `<p class="text-red-500">${error.message}</p>`;
-          explanationContainer.classList.remove("hidden");
+                // Extract brief explanation
+                const explanationHTML = explanationData[0].meanings[0].definitions[0].definition;
+                explanationContainer.innerHTML = `<p class="text-lg font-semibold">${explanationHTML}</p>`;
+                explanationContainer.classList.remove("hidden");
+            } catch (error) {
+                // Display error message
+                explanationContainer.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+                explanationContainer.classList.remove("hidden");
+            }
         }
-      }
 
-      // Event listener for the "Search" button
-      document
-        .getElementById("search-btn")
-        .addEventListener("click", function () {
-          const searchInput = document
-            .getElementById("search-input")
-            .value.trim();
-          if (searchInput !== "") {
-            displayExplanation(searchInput);
-          }
+        // Event listener for the "Search" button
+        document.getElementById("search-btn").addEventListener("click", function() {
+            const searchInput = document.getElementById("search-input").value.trim();
+            if (searchInput !== "") {
+                displayExplanation(searchInput);
+            }
         });
 
-      // Trigger search on pressing Enter key
-      document
-        .getElementById("search-input")
-        .addEventListener("keypress", function (event) {
-          if (event.key === "Enter") {
-            const searchInput = document
-              .getElementById("search-input")
-              .value.trim();
-            if (searchInput !== "") {
-              displayExplanation(searchInput);
+        // Trigger search on pressing Enter key
+        document.getElementById("search-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                const searchInput = document.getElementById("search-input").value.trim();
+                if (searchInput !== "") {
+                    displayExplanation(searchInput);
+                }
             }
-          }
+        });
+
+        // Event listener for the "How to Use" button
+        document.getElementById("how-to-use-btn").addEventListener("click", function() {
+            // Implement functionality for displaying usage instructions
+            alert("Usage instructions will be displayed here.");
         });
     </script>
-  </body>
+</body>
 </html>
